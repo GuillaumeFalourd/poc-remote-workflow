@@ -1,0 +1,22 @@
+name: Remote Workflow
+
+on: [repository_dispatch]
+
+jobs:
+  receiver:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'Start Workflow'
+    steps:
+      - name: Event Information
+        run: |
+          echo "Event '${{ github.event.action }}' received from '${{ github.event.client_payload.repository }}'"
+  producer:
+    needs: [receiver]
+    runs-on: ubuntu-latest
+    steps:
+      - name: RESPONSE INIT WORKFLOW
+        run: |
+          curl -X POST https://api.github.com/repos/GuillaumeFalourd/poc-github-actions/dispatches \
+          -H 'Accept: application/vnd.github.everest-preview+json' \
+          -u ${{ secrets.ACCESS_TOKEN }} \
+          --data '{"event_type": "Workflow Response", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
