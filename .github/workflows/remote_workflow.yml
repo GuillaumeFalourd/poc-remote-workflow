@@ -10,6 +10,7 @@ jobs:
       - name: Event Information
         run: |
           echo "Event '${{ github.event.action }}' received from '${{ github.event.client_payload.repository }}'"
+  
   producer:
     needs: [receiver]
     runs-on: ubuntu-latest
